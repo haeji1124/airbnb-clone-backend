@@ -1,23 +1,35 @@
-from django.db import models
-from django.contrib.auth.models import User
+from django.contrib import admin
+from django.db.models import Q
+from .models import Tweet, Like
 
-class TimeStampedModel(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+class ElonMuskFilter(admin.SimpleListFilter):
+    title = 'Elon Musk'
+    parameter_name = 'elon_musk'
 
-    class Meta:
-        abstract = True
+    def lookups(self, request, model_admin):
+        return (
+            ('yes', 'Contains "Elon Musk"'),
+            ('no', 'Does not contain "Elon Musk"'),
+        )
 
-class Tweet(TimeStampedModel):
-    payload = models.TextField(max_length=180)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    def queryset(self, request, queryset):
+        if self.value() == 'yes':
+            return queryset.filter(payload__icontains='Elon Musk')
+        if self.value() == 'no':
+            return queryset.exclude(payload__icontains='Elon Musk')
 
-    def __str__(self):
-        return f"{self.user.username}: {self.payload[:20]}..."
+@admin.register(Like)
+class LikeAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'tweet', 'created_at')
+    search_fields = ('user__username',)
+    list_filter = ('created_at',)
 
-class Like(TimeStampedModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    tweet = models.ForeignKey(Tweet, on_delete=models.CASCADE)
+@admin.register(Tweet)
+class TweetAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'payload', 'created_at', 'like_count')
+    search_fields = ('payload', 'user__username')
+    list_filter = ('created_at', ElonMuskFilter)
 
-    def __str__(self):
-        return f"{self.user.username} likes {self.tweet.payload[:20]}..."
+    def like_count(self, obj):
+        return obj.like_count()
+    like_count.short_description = 'Likes'
