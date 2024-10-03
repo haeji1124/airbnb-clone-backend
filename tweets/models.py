@@ -1,23 +1,37 @@
 from django.db import models
-from django.contrib.auth.models import User
+from common.models import CommonModel
 
-class TimeStampedModel(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
-    class Meta:
-        abstract = True
+class Tweet(CommonModel):
+    """Tweet Model Definition"""
 
-class Tweet(TimeStampedModel):
-    payload = models.TextField(max_length=180)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f"{self.user.username}: {self.payload[:20]}..."
-
-class Like(TimeStampedModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    tweet = models.ForeignKey(Tweet, on_delete=models.CASCADE)
+    payload = models.CharField(max_length=180)
+    user = models.ForeignKey(
+        "users.User",
+        on_delete=models.CASCADE,
+        related_name="tweets",
+    )
 
     def __str__(self):
-        return f"{self.user.username} likes {self.tweet.payload[:20]}..."
+        return self.payload
+
+    def like_count(self):
+        return self.likes.count()
+
+
+class Like(CommonModel):
+    """Like Model Definition"""
+
+    user = models.ForeignKey(
+        "users.User",
+        on_delete=models.CASCADE,
+        related_name="likes",
+    )
+    tweet = models.ForeignKey(
+        "tweets.Tweet",
+        on_delete=models.CASCADE,
+        related_name="likes",
+    )
+
+    def __str__(self):
+        return f"{self.tweet.payload}"
