@@ -1,13 +1,11 @@
-from django.shortcuts import render
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from .serializers import TweetSerializer
 from .models import Tweet
 
 
-def see_all_tweets(request):
+@api_view(["GET"])
+def all_tweets(request):
     tweets = Tweet.objects.all()
-    return render(
-        request,
-        "home.html",
-        {
-            "tweets": tweets,
-        },
-    )
+    serializer = TweetSerializer(tweets, many=True)
+    return Response(serializer.data)
