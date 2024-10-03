@@ -11,6 +11,7 @@ python = "3.10.11"
 django = "^5.1.1"
 pillow = "^10.4.0"
 black = "^24.8.0"
+djangorestframework = "^3.15.2"
 
 
 [build-system]
