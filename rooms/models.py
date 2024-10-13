@@ -58,7 +58,7 @@ class Room(CommonModel):
                 total_rating += review["rating"]
             return round(total_rating / count, 2)
         else:
-            return "No Reviews"
+            return 0
 
 
 class Amenity(CommonModel):

@@ -3,7 +3,8 @@ from common.models import CommonModel
 
 
 class Photo(CommonModel):
-    file = models.ImageField()
+    # file = models.ImageField()
+    file = models.URLField()
     description = models.CharField(
         max_length=140,
     )
@@ -27,7 +28,8 @@ class Photo(CommonModel):
 
 
 class Video(CommonModel):
-    file = models.FileField()
+    # file = models.FileField()
+    file = models.URLField()
     experience = models.OneToOneField(
         # foreignKey와 비슷한데, 이 동영상이 하나의 활동과 연결되면
         # 그 활동은 다른 동영상을 가질수 없게 된다.
