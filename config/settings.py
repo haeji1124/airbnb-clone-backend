@@ -29,6 +29,7 @@ ALLOWED_HOSTS = []
 
 THIRD_PARTY_APPS = [
     "rest_framework",
+    "rest_framework.authtoken",
 ]
 
 CUSTOM_APPS = [
@@ -144,6 +145,15 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Auth
 AUTH_USER_MODEL = "users.User"
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "config.authentication.JWTAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+        "config.authentication.UsernameAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
+    ]
+}
 
 MEDIA_ROOT = "uploads"
 MEDIA_URL = "user-uploads/"
